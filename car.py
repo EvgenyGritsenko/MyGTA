@@ -22,7 +22,8 @@ class Car:
         self.mdown = False
         self.distance_traveled = 1
         self.number_of_kilometres = self.distance_traveled // 1000
-        self.speed = 3
+        self.speed = 5
+        self.hp = 100
 
     def output(self):
         """Отображение машинки"""
@@ -67,10 +68,8 @@ class Car:
             n = self.notification(self.screen, "У вас нет топлива!")
             n.warning()
 
-    def set_distance(self):
-        """
-        Считает проеханное машиной расстояние
-        """
-        if self.mleft or self.mright or self.mup or self.mdown:
-            self.distance_traveled += self.speed
+    def status_player(self):
+        if self.hp > 0:
+            return True
+        return False
 

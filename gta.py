@@ -5,8 +5,9 @@ from car import Car
 import controls
 from fill_car import Fill
 import database
-import stats_player
+import statistics_player
 import notifications
+import states
 pygame.init()
 pygame.font.init()
 clock = pygame.time.Clock()
@@ -40,27 +41,21 @@ def run():
     if not get_reg:
         db.add_record()
         print("Запись в БД создана")
-    stats = stats_player.Stats(db)
+    stats = statistics_player.Stats(db)
     car = Car(screen, stats, db, notifications.Notifications)
     fill = Fill(screen, notifications.Notifications, stats)
 
+    background = world_objects.CreateBackground(screen)
+    state = states.StatePlayer(car, background)
     while True:
-        world_objects.CreateBackground(screen)
-        road = world_objects.CreateRoad(screen)
-        road.move()
-        # world_objects.CreateShop(screen, car)
+        background.move()
 
         controls.events(car, fill.true_pos)
-
-        # fill.output()
-        # fill.position_tracker(car.rect)
-        # fill.in_place()
 
         car.output()
         car.start_engine()
         car.update_car()
         car.game_border()
-        car.set_distance()
 
         info_text()
         clock.tick(30)
