@@ -16,7 +16,7 @@ class CreateBackground(pygame.sprite.Sprite):
 
     def move(self):
         """Циклично двигает задний фон"""
-        if self.rect.y > -100:
+        if self.rect.y > -10:
             self.rect.y = -1000
         self.rect.y += self.speed
         self.surf.blit(self.image, self.rect)

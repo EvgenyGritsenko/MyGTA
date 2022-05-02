@@ -1,4 +1,6 @@
 """Инициализирующий файл игры"""
+import time
+
 import pygame
 import world_objects
 from car import Car
@@ -8,6 +10,9 @@ import database
 import statistics_player
 import notifications
 import states
+import bullets
+from pygame.sprite import Group
+from cops import Cops
 pygame.init()
 pygame.font.init()
 clock = pygame.time.Clock()
@@ -46,16 +51,24 @@ def run():
     fill = Fill(screen, notifications.Notifications, stats)
 
     background = world_objects.CreateBackground(screen)
-    state = states.StatePlayer(car, background)
+    # state = states.StatePlayer(car, background)
+
+    LIST_COP_CARS = []
+
+    cops_bullets = Group()
+    player_bullets = Group()
+    police_car_group = Group()
+
+    police_car = Cops(screen, car, police_car_group, LIST_COP_CARS)
+    LIST_COP_CARS.append(police_car)
+    pygame.time.set_timer(pygame.USEREVENT, 3000)
+
     while True:
         background.move()
-
-        controls.events(car, fill.true_pos)
-
-        car.output()
-        car.start_engine()
-        car.update_car()
-        car.game_border()
+        controls.events(screen, car, fill.true_pos, player_bullets, cops_bullets, police_car_group,
+                        LIST_COP_CARS)
+        controls.update(car, player_bullets, LIST_COP_CARS, police_car_group, cops_bullets)
+        states_player = states.StatePlayer(car, background, LIST_COP_CARS, screen)
 
         info_text()
         clock.tick(30)
