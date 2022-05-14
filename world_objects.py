@@ -1,4 +1,5 @@
 import pygame
+
 pygame.init()
 W = 1000
 H = 1000
@@ -6,10 +7,11 @@ H = 1000
 
 class CreateBackground(pygame.sprite.Sprite):
     """Создает и отображает игровой фон"""
+
     def __init__(self, surf):
         super().__init__()
         self.surf = surf
-        self.image = pygame.image.load("images/background.png").convert_alpha()
+        self.image = pygame.image.load("images/background.png").convert()
         self.rect = self.image.get_rect(x=0, y=-1000)
         self.surf.blit(self.image, self.rect)
         self.speed = 3
@@ -21,5 +23,5 @@ class CreateBackground(pygame.sprite.Sprite):
         self.rect.y += self.speed
         self.surf.blit(self.image, self.rect)
 
-
-
+    def __repr__(self):
+        return f"CreateBackground({self.surf})"

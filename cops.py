@@ -8,8 +8,9 @@ def random_x():
 
 
 class Cops(pygame.sprite.Sprite):
-    def __init__(self, screen, car, group, list_cop_cars):
-        super().__init__()
+    def __init__(self, screen, car, group, list_cop_cars, db):
+        super(Cops, self).__init__()
+        self.db = db
         self.list_cop_cars = list_cop_cars
         self.screen = screen
         self.car = car
@@ -17,18 +18,21 @@ class Cops(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(x=random_x(), y=-50)
         self.speed = 5
         self.collision_with_player_car()
-        self.add(group)
+        self.group = group
+        self.add(self.group)
 
     def update(self):
         """Рисует и двигает машинку на экране"""
         self.rect.y += self.speed
         self.screen.blit(self.image, self.rect)
 
-        if self.rect.y > 1000:
+        if self.rect.y > 1500:
             self.kill()
             self.list_cop_cars.remove(self)
 
     def collision_with_player_car(self):
         if self.rect.colliderect(self.car.rect):
-            self.car.hp = 0
+            self.db.update_hp(-100)
 
+    def __repr__(self):
+        return f"Cops({self.screen}, {self.car}, {self.group}, {self.list_cop_cars})"

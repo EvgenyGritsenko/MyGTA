@@ -28,3 +28,5 @@ class Notifications:
         self.render_font = self.font.render(self.text, True, (255, 255, 255), self.background_color)
         self.surface.blit(self.render_font, (self.current_y, 50))
 
+    def __repr__(self):
+        return f"Notifications({self.surface}, {self.text})"
