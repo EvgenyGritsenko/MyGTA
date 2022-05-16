@@ -28,10 +28,10 @@ def info_text():
     shell_now = db.get_shells()
     render_shells_now = font.render(f"Кол-во снарядов: {str(shell_now)}", True, (255, 255, 255))
     money_now = db.get_money()
-    text_money = f"Деньги: {money_now}$"
+    text_money = f"Деньги: {str(money_now)}$"
     render_text_money = font.render(text_money, True, (255, 255, 255))
     hp_now = db.get_hp()
-    render_hp_now = font.render(f"Здоровье: {hp_now}", True, (255, 255, 255))
+    render_hp_now = font.render(f"Здоровье: {str(hp_now)}", True, (255, 255, 255))
 
     text_field.blit(render_text_money, (10, 10))
     text_field.blit(render_shells_now, (render_text_money.get_width() + 30, 10))
@@ -53,20 +53,34 @@ def run():
     cops_bullets = Group()
     player_bullets = Group()
     police_car_group = Group()
+    bomb_group = Group()
+    bullets_box_group = Group()
+    get_health_group = Group()
     pygame.time.set_timer(pygame.USEREVENT, 3000)
+    pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
+    pygame.time.set_timer(pygame.USEREVENT + 2, 20000)
+    pygame.time.set_timer(pygame.USEREVENT + 3, 10000)
     cop_car = Cops(screen, car, police_car_group, LIST_COP_CARS, db)
     LIST_COP_CARS.append(cop_car)
+
+    # start music
+    pygame.mixer.music.load("sounds/music.mp3")
+    pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(0.3)
 
     while True:
         background.move()
         controls.events(screen, car, player_bullets, cops_bullets, police_car_group,
-                        LIST_COP_CARS, db)
-        controls.update(car, player_bullets, LIST_COP_CARS, police_car_group, cops_bullets)
+                        LIST_COP_CARS, db, bomb_group, bullets_box_group,
+                        get_health_group)
+        controls.update(car, player_bullets, LIST_COP_CARS, police_car_group,
+                        cops_bullets, bomb_group, bullets_box_group,
+                        get_health_group)
 
         mouse_position = pygame.mouse.get_pos()
         pressed = pygame.mouse.get_pressed()
-        states_player = states.StatusPlayer(car, background, LIST_COP_CARS, screen, mouse_position,
-                                            pressed, db)
+        states.StatusPlayer(car, background, LIST_COP_CARS, screen,
+                            mouse_position, pressed, db)
 
         info_text()
         clock.tick(30)

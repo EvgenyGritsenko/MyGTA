@@ -3,12 +3,13 @@ import pygame
 import sys
 from bullets import BulletPlayer, BulletCop
 from cops import Cops
-
-CAR_MOVE = True
+from bombs import Bomb
+from bullets_box import BulletsBox
+from get_health import GetHealth
 
 
 def events(screen, car, player_bullets, cops_bullets, police_car_group,
-           list_cop_cars, db):
+           list_cop_cars, db, bomb_group, bullets_box_group, get_health_group):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
@@ -40,10 +41,21 @@ def events(screen, car, player_bullets, cops_bullets, police_car_group,
         elif event.type == pygame.USEREVENT:
             new_cop_car = Cops(screen, car, police_car_group, list_cop_cars, db)
             list_cop_cars.append(new_cop_car)
-            new_bullet_cop = BulletCop(screen, car, cops_bullets, list_cop_cars, db)
+            BulletCop(screen, car, cops_bullets, list_cop_cars, db)
+
+        elif event.type == pygame.USEREVENT + 1:
+            Bomb(screen, bomb_group, car, list_cop_cars, player_bullets,
+                 cops_bullets)
+
+        elif event.type == pygame.USEREVENT + 2:
+            BulletsBox(screen, car, db, bullets_box_group)
+
+        elif event.type == pygame.USEREVENT + 3:
+            GetHealth(screen, car, get_health_group, db)
 
 
-def update(car, player_bullets, list_cop_cars, police_car_group, cops_bullets):
+def update(car, player_bullets, list_cop_cars, police_car_group, cops_bullets,
+           bomb_group, bullets_box, get_health_group):
     for bullet in player_bullets.sprites():
         bullet.draw_bullets()
         bullet.collide_with_cop_car()
@@ -51,6 +63,18 @@ def update(car, player_bullets, list_cop_cars, police_car_group, cops_bullets):
     for cop_bullet in cops_bullets:
         cop_bullet.update()
         cop_bullet.collide_with_player_car()
+
+    for bomb in bomb_group:
+        bomb.update()
+        bomb.collide_with_all_objects()
+
+    for bullet_box in bullets_box:
+        bullet_box.update()
+        bullet_box.collide_with_car()
+
+    for get_health in get_health_group:
+        get_health.update()
+        get_health.collide_with_car()
 
     car.output()
     car.update_car()

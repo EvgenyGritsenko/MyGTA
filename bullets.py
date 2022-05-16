@@ -74,7 +74,7 @@ class BulletCop(pygame.sprite.Sprite):
 
     def collide_with_player_car(self):
         if self.rect.colliderect(self.car.rect):
-            self.db.update_hp(-100)
+            self.db.update_hp(0)
             # print("death")
 
     def __repr__(self):
