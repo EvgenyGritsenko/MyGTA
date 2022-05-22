@@ -50,6 +50,8 @@ class DataBase:
         new_hp = int(old_hp) + amount
         if amount == 0:
             self.cursor.execute("UPDATE stats SET hp = ?", (0,))
+        elif amount == 100:
+            self.cursor.execute("UPDATE stats SET hp = ?", (100,))
         else:
             self.cursor.execute("UPDATE stats SET hp = ?", (new_hp,))
         self.base.commit()

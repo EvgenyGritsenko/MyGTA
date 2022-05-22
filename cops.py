@@ -1,5 +1,6 @@
 import random
 import pygame
+from states import set_null_hp, set_full_hp
 
 
 def random_x():
@@ -16,7 +17,7 @@ class Cops(pygame.sprite.Sprite):
         self.car = car
         self.image = pygame.image.load("images/cop.png").convert_alpha()
         self.rect = self.image.get_rect(x=random_x(), y=-50)
-        self.speed = 5
+        self.speed = 8
         self.collision_with_player_car()
         self.group = group
         self.add(self.group)
@@ -26,16 +27,18 @@ class Cops(pygame.sprite.Sprite):
         self.rect.y += self.speed
         self.screen.blit(self.image, self.rect)
 
-        if self.rect.y > 1500:
+        if self.rect.y > 1000:
             self.kill()
-            self.list_cop_cars.remove(self)
-            self.db.update_hp(-20)
+            if self.list_cop_cars:
+                self.list_cop_cars.remove(self)
+            if self.db.get_hp() > 20:
+                self.db.update_hp(-20)
+            else:
+                set_null_hp(self.db)
 
     def collision_with_player_car(self):
         if self.rect.colliderect(self.car.rect):
-            player_hp = self.db.get_hp()
-            if player_hp >= 100:
-                self.db.update_hp(0)
+            set_null_hp(self.db)
 
     def __repr__(self):
         return f"Cops({self.screen}, {self.car}, {self.group}, {self.list_cop_cars})"

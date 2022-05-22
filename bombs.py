@@ -1,9 +1,11 @@
+import time
 import pygame
 import random
 
-# ИСПРАВИТЬ БАГ С ОСТАНАВЛИВАЮЩЕЙСЯ БОМБОЙ
+
 class Bomb(pygame.sprite.Sprite):
-    def __init__(self, screen, group, car, cop_cars, bullets, cops_bullets):
+    def __init__(self, screen, group, car, cop_cars, bullets, cops_bullets,
+                 db):
         super(Bomb, self).__init__()
         self.car = car
         self.cop_cars = cop_cars
@@ -22,6 +24,8 @@ class Bomb(pygame.sprite.Sprite):
                                                                           self.rect.y))
         sound_shot = pygame.mixer.Sound("sounds/flight_sound.mp3")
         sound_shot.play()
+        self.start_timer = time.time()
+        self.db = db
 
     def update(self):
         self.speed = 15
@@ -57,20 +61,14 @@ class Bomb(pygame.sprite.Sprite):
                 gunshot_sound_player = pygame.mixer.\
                     Sound("sounds/explosion_with_car.mp3")
                 gunshot_sound_player.play()
-                self.draw_explosion()
                 self.kill()
+                self.db.update_hp(0)
+                Explosion(self.screen, self)
             else:
                 gunshot_sound_other = pygame.mixer.\
                     Sound("sounds/explosion_with_other.mp3")
                 gunshot_sound_other.play()
                 self.way_back()
-
-    def draw_explosion(self):
-        # start_ticks = pygame.time.get_ticks()
-        self.screen.blit(self.image_explosion, self.image_explosion_rect)
-
-        # if (pygame.time.get_ticks() - start_ticks) / 1000 > 3:
-        #     self.image_explosion_rect.x = 1500
 
     def way_back(self):
         self.way = "back"
@@ -87,8 +85,6 @@ class Bomb(pygame.sprite.Sprite):
             self.rect.x -= self.speed
             self.rect.y += self.speed
 
-
-
     @staticmethod
     def random_coordinates_start():
         # третий аргумент это сторона с которой летит бомба
@@ -98,3 +94,19 @@ class Bomb(pygame.sprite.Sprite):
 
     def __repr__(self):
         return f"Bomb()"
+
+
+class Explosion:
+    def __init__(self, screen, bomb):
+        super(Explosion, self).__init__()
+        self.image = pygame.image.load("images/explosion.png")
+        self.rect = self.image.get_rect(x=bomb.rect.x, y=bomb.rect.y)
+        self.screen = screen
+        self.bomb = bomb
+        self.start_timer = time.time()
+        self.draw()
+
+    def draw(self):
+        now = time.time()
+        if now - self.start_timer < 3:
+            self.screen.blit(self.image, self.rect)

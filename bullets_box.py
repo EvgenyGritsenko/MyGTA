@@ -27,7 +27,7 @@ class BulletsBox(pygame.sprite.Sprite):
     def collide_with_car(self):
         if self.rect.colliderect(self.car.rect):
             if self.db.get_money() >= 400:
-                self.db.update_shells(20)
+                self.db.update_shells(30)
                 self.db.update_money(-400)
                 get_shells = pygame.mixer.Sound("sounds/get_shells.mp3")
                 get_shells.play()

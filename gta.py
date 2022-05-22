@@ -7,7 +7,9 @@ import database
 import notifications
 import states
 from pygame.sprite import Group
+import time
 from cops import Cops
+import constants
 
 pygame.init()
 pygame.font.init()
@@ -32,11 +34,14 @@ def info_text():
     render_text_money = font.render(text_money, True, (255, 255, 255))
     hp_now = db.get_hp()
     render_hp_now = font.render(f"Здоровье: {str(hp_now)}", True, (255, 255, 255))
+    timer_now = constants.SECONDS
+    render_time_now = font.render(f"ЦЕЛЬ: {str(timer_now)}/1800", True, (255, 255, 255))
 
     text_field.blit(render_text_money, (10, 10))
     text_field.blit(render_shells_now, (render_text_money.get_width() + 30, 10))
     text_field.blit(render_hp_now, (render_text_money.get_width() + 30 + render_shells_now.get_width() + 30,
                                     10))
+    text_field.blit(render_time_now, (700, 10))
 
     screen.blit(text_field, (0, 0))
 
@@ -45,9 +50,8 @@ def run():
     get_reg = db.cursor.execute("SELECT player_registered FROM stats").fetchone()
     if not get_reg:
         db.add_record()
-        print("Запись в БД создана")
 
-    car = Car(screen, db, notifications.Notifications)
+    # car = Car(screen, db, notifications.Notifications)
     background = world_objects.CreateBackground(screen)
     LIST_COP_CARS = []
     cops_bullets = Group()
@@ -60,31 +64,44 @@ def run():
     pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
     pygame.time.set_timer(pygame.USEREVENT + 2, 20000)
     pygame.time.set_timer(pygame.USEREVENT + 3, 10000)
-    cop_car = Cops(screen, car, police_car_group, LIST_COP_CARS, db)
-    LIST_COP_CARS.append(cop_car)
 
-    # start music
     pygame.mixer.music.load("sounds/music.mp3")
     pygame.mixer.music.play()
     pygame.mixer.music.set_volume(0.3)
 
+    car = Car(screen, db, notifications.Notifications)
+    cop_car = Cops(screen, car, police_car_group, LIST_COP_CARS, db)
+
     while True:
+        LIST_COP_CARS.append(cop_car)
+        states.StatusPlayer(car, screen, LIST_COP_CARS, player_bullets, cops_bullets,
+                            bullets_box_group, get_health_group, bomb_group, db,
+                            police_car_group)
+
         background.move()
         controls.events(screen, car, player_bullets, cops_bullets, police_car_group,
                         LIST_COP_CARS, db, bomb_group, bullets_box_group,
                         get_health_group)
         controls.update(car, player_bullets, LIST_COP_CARS, police_car_group,
                         cops_bullets, bomb_group, bullets_box_group,
-                        get_health_group)
-
-        mouse_position = pygame.mouse.get_pos()
-        pressed = pygame.mouse.get_pressed()
-        states.StatusPlayer(car, background, LIST_COP_CARS, screen,
-                            mouse_position, pressed, db)
+                        get_health_group, screen, db)
 
         info_text()
         clock.tick(30)
         pygame.display.update()
+
+        if constants.SECONDS > time.time() - constants.TIMER_START:
+            continue
+        else:
+            if constants.SECONDS == 5:
+                constants.TIMER_START = time.time()
+                constants.SECONDS = 0
+                db.update_money(1000000000)
+                states.StatusPlayerWin(screen, db)
+            elif constants.SECONDS % 300 == 0:
+                db.update_money(200)
+                pygame.mixer.Sound("sounds/get_hp.mp3")
+            constants.SECONDS += 1
 
 
 run()
