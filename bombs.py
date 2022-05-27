@@ -24,7 +24,6 @@ class Bomb(pygame.sprite.Sprite):
                                                                           self.rect.y))
         sound_shot = pygame.mixer.Sound("sounds/flight_sound.mp3")
         sound_shot.play()
-        self.start_timer = time.time()
         self.db = db
 
     def update(self):
@@ -98,15 +97,14 @@ class Bomb(pygame.sprite.Sprite):
 
 class Explosion:
     def __init__(self, screen, bomb):
-        super(Explosion, self).__init__()
         self.image = pygame.image.load("images/explosion.png")
         self.rect = self.image.get_rect(x=bomb.rect.x, y=bomb.rect.y)
         self.screen = screen
         self.bomb = bomb
-        self.start_timer = time.time()
         self.draw()
 
     def draw(self):
-        now = time.time()
-        if now - self.start_timer < 3:
-            self.screen.blit(self.image, self.rect)
+        self.screen.blit(self.image, self.rect)
+
+    def __repr__(self):
+        return "Explosion()"

@@ -7,7 +7,7 @@ import car
 
 class StatusPlayer:
     def __init__(self, car, screen, list_cop_cars, bullets, bullets_cops,
-                 bullets_box, get_gealth_group, bombs, db, police_car_group):
+                 bullets_box, get_health_group, bombs, db, police_car_group):
         self.db = db
         self.car = car
         self.screen = screen
@@ -15,7 +15,7 @@ class StatusPlayer:
         self.bullets = bullets
         self.bullets_cops = bullets_cops
         self.bullets_box = bullets_box
-        self.get_gealth_group = get_gealth_group
+        self.get_gealth_group = get_health_group
         self.bombs = bombs
         self.police_car_group = police_car_group
         self.check_status()
@@ -25,6 +25,9 @@ class StatusPlayer:
             StatusPlayerDeath(self.screen, self.list_cop_cars, self.bullets,
                               self.bullets_cops, self.bullets_box, self.get_gealth_group,
                               self.bombs, self.db, self.police_car_group)
+
+    def __repr__(self):
+        return "StatusPLayer()"
 
 
 class StatusPlayerDeath:
@@ -56,11 +59,11 @@ class StatusPlayerDeath:
         sound_game_over.play()
         time.sleep(4)
         constants.TIMER_START = time.time()
-        constants.SECONDS = 0
+        constants.SCORE = 1
         StatusPlayerRestart(self.screen, self.db)
 
     def __repr__(self):
-        return f"StatePlayer()"
+        return "StatusPlayerDeath()"
 
 
 class StatusPlayerRestart:
@@ -78,19 +81,27 @@ class StatusPlayerRestart:
 
 class StatusPlayerWin:
     def __init__(self, screen, db):
+        print(constants.SCORE)
         self.screen = screen
         self.db = db
         self.image = pygame.image.load("images/win.png").convert_alpha()
-        self.image_rect = self.image.get_rect(x=1000/2, y=200)
-        self.screen.blit(self.image, self.image_rect)
-        self.sound = pygame.mixer.Sound("sounds/WIN.mp3")
-        self.win()
+        self.image_rect = self.image.get_rect(center=(1000/2, 200))
+        if constants.SCORE >= 10:
+            self.win()
 
     def win(self):
+        controls.STATE_OF_EVENTS = False
+        sound = pygame.mixer.Sound("sounds/WIN.mp3")
         pygame.mixer.music.stop()
-        self.sound.play()
-        time.sleep(10)
+        sound.play()
+        self.db.update_money(1000000000)
+        constants.WIN_PLAYER = False
         StatusPlayerRestart(self.screen, self.db)
+        constants.SCORE = 10
+        self.screen.blit(self.image, self.image_rect)
+
+    def __repr__(self):
+        return "StatusPlayerWin()"
 
 
 def set_null_hp(db):
@@ -99,5 +110,3 @@ def set_null_hp(db):
 
 def set_full_hp(db):
     db.update_hp(100)
-
-

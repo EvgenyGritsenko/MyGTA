@@ -24,4 +24,4 @@ class CreateBackground(pygame.sprite.Sprite):
         self.surf.blit(self.image, self.rect)
 
     def __repr__(self):
-        return f"CreateBackground({self.surf})"
+        return f"CreateBackground()"

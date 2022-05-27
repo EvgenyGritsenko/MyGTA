@@ -23,7 +23,6 @@ class Cops(pygame.sprite.Sprite):
         self.add(self.group)
 
     def update(self):
-        """Рисует и двигает машинку на экране"""
         self.rect.y += self.speed
         self.screen.blit(self.image, self.rect)
 
@@ -41,4 +40,4 @@ class Cops(pygame.sprite.Sprite):
             set_null_hp(self.db)
 
     def __repr__(self):
-        return f"Cops({self.screen}, {self.car}, {self.group}, {self.list_cop_cars})"
+        return f"Cops()"

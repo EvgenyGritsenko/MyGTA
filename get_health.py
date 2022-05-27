@@ -38,3 +38,6 @@ class GetHealth(pygame.sprite.Sprite):
     @staticmethod
     def random_x():
         return random.randint(50, 850)
+
+    def __repr__(self):
+        return "GetHealth()"

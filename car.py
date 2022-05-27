@@ -20,17 +20,13 @@ class Car:
         self.mright = False
         self.mup = False
         self.mdown = False
-        self.distance_traveled = 1
-        self.number_of_kilometres = self.distance_traveled // 1000
         self.speed = 8
         self.hp = int(self.db.get_hp())
 
     def output(self):
-        """Отображение машинки"""
         self.screen.blit(self.image, self.rect)
 
     def update_car(self):
-        """Обновление позиции машинки"""
         if self.mleft:
             self.image = pygame.image.load("images/car_left.png")
             self.rect.x -= self.speed

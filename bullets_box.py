@@ -38,6 +38,7 @@ class BulletsBox(pygame.sprite.Sprite):
 
     @staticmethod
     def random_x():
+        """Рандомно генерирует координату x для спавна"""
         return random.randint(50, 850)
 
     def __repr__(self):

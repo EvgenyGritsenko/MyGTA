@@ -91,6 +91,7 @@ def update(car, player_bullets, list_cop_cars, police_car_group, cops_bullets,
 
 
 def backup_events(db):
+    """Используется при отключении всех событий в функции events"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             db.update_hp(100)

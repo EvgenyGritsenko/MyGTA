@@ -1,4 +1,5 @@
 import pygame
+import constants
 
 
 class BulletPlayer(pygame.sprite.Sprite):
@@ -44,7 +45,7 @@ class BulletPlayer(pygame.sprite.Sprite):
         gunshot_sound.play()
 
     def __repr__(self):
-        return f"BulletPlayer({self.screen}, {self.car}, {self.list_cop_cars})"
+        return f"BulletPlayer()"
 
 
 class BulletCop(pygame.sprite.Sprite):
@@ -78,4 +79,4 @@ class BulletCop(pygame.sprite.Sprite):
             # print("death")
 
     def __repr__(self):
-        return f"BulletCop({self.screen}, {self.car}, {self.group})"
+        return f"BulletCop()"
